@@ -11,6 +11,32 @@ import (
 	"testing"
 )
 
+func TestFFmpegTaggerWithFinderPATH(t *testing.T) {
+	if runtime.GOOS != "darwin" {
+		t.Skip("macOS Finder PATH regression")
+	}
+	var ffmpeg string
+	for _, candidate := range []string{"/opt/homebrew/bin/ffmpeg", "/usr/local/bin/ffmpeg"} {
+		if path, err := exec.LookPath(candidate); err == nil {
+			ffmpeg = path
+			break
+		}
+	}
+	if ffmpeg == "" {
+		t.Skip("Homebrew ffmpeg not installed")
+	}
+	path := filepath.Join(t.TempDir(), "001.发刊词.mp3")
+	if out, err := exec.Command(ffmpeg, "-nostdin", "-y", "-f", "lavfi", "-i", "sine=duration=0.1", path).CombinedOutput(); err != nil {
+		t.Fatalf("generate fixture: %v\n%s", err, out)
+	}
+	// Finder/LaunchServices does not inherit the terminal's Homebrew PATH.
+	t.Setenv("PATH", "/usr/bin:/bin:/usr/sbin:/sbin")
+	err := (FFmpegTagger{}).Tag(context.Background(), path, Album{Title: "课程"}, Track{Title: "发刊词", Number: 1}, "")
+	if err != nil {
+		t.Fatalf("default tagger must discover Homebrew ffmpeg with Finder PATH: %v", err)
+	}
+}
+
 func TestFFmpegFailurePreservesOriginal(t *testing.T) {
 	if runtime.GOOS == "windows" {
 		t.Skip("POSIX executable fixture")

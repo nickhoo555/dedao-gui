@@ -68,7 +68,7 @@
         └── 书名.mp3
 ```
 
-* 下载弹窗新增 **仅元数据**：不请求音频流、不下载 MP3，只生成旁车文件并给输出目录内已有的对应 MP3 补写标签。没有 MP3 时不需要 ffmpeg；已有 MP3 时仍需配置或在 PATH 中安装 ffmpeg。
+* 下载弹窗新增 **仅元数据**：不请求音频流、不下载 MP3，只生成旁车文件并给输出目录内已有的对应 MP3 补写标签。没有 MP3 时不需要 ffmpeg；已有 MP3 时需安装 ffmpeg。查找顺序为系统设置中的路径、PATH、macOS 常见 Homebrew 目录（`/opt/homebrew/bin`、`/usr/local/bin`），从 Finder 启动也可自动查找。
 * 新版听书按本书独立成目录，防止多本书共用封面。处理某本书时，如果新版目标文件不存在，会将旧版 `每天听本书/MP3/书名.mp3` 移入对应子目录；两处都有文件则保留两份，不覆盖已有音频。
 * 课程目录结构不变；单篇文章的“仅元数据”只补写该篇 MP3，课程级 NFO 和封面仍共用。重复下载会跳过已有的非空 MP3；重新生成 NFO 和补写标签会覆盖相应字段，保留有效的本地 `cover.jpg`。
 * 在 Jellyfin 中可按**音乐库**导入课程（每门课一个专辑），或按**有声书库**导入听书，并刷新元数据。音乐库读取 `album.nfo`；音频/有声书的标题、作者和排序依赖**内嵌标签**，不能只靠 NFO。详见 [Jellyfin NFO](https://jellyfin.org/docs/general/server/metadata/nfo/)、[音乐](https://jellyfin.org/docs/general/server/media/music/)、[有声书](https://jellyfin.org/docs/general/server/media/books/)。

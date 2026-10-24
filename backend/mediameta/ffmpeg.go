@@ -8,6 +8,8 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strconv"
+
+	"github.com/yann0917/dedao-gui/backend/tooling"
 )
 
 type FFmpegTagger struct {
@@ -20,9 +22,9 @@ func (t FFmpegTagger) Tag(ctx context.Context, path string, album Album, track T
 	if err := ctx.Err(); err != nil {
 		return err
 	}
-	tool := t.Executable
-	if tool == "" {
-		tool = "ffmpeg"
+	tool, err := tooling.Resolve(t.Executable, "ffmpeg")
+	if err != nil {
+		return err
 	}
 	f, err := os.CreateTemp(filepath.Dir(path), ".metadata-*.mp3")
 	if err != nil {
